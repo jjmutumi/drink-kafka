@@ -5,15 +5,19 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Respect\Validation\Exceptions\NestedValidationException;
 
 
-/** @var $newOrderValidator */
+/** @var \Respect\Validation\Validator $newOrderValidator */
 $newOrderValidator = $app->getContainer()->get('newOrderValidator');
 
 
-$app->post('/api/orders', function (Request $request, Response $response, array $args) use ($newOrderValidator) {
+$app->post('/api/orders', function (Request $request, Response $response, array $args) use ($newOrderValidator)
+{
     $data = $request->getParsedBody();
     try {
         $newOrderValidator->assert($data);
-        $this->newOrderTopic->produce(RD_KAFKA_PARTITION_UA, 0, json_encode($data));
+
+        /** @var \RdKafka\ProducerTopic $newOrderTopic */
+        $newOrderTopic = $this->newOrderTopic;
+        $newOrderTopic->produce(RD_KAFKA_PARTITION_UA, 0, json_encode($data));
         $response = $response
                         ->withStatus(200)
                         ->withJson(["message" => "OK"]);
