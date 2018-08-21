@@ -4,13 +4,16 @@
 $container = $app->getContainer();
 
 // kafka producer
-$container['kafka'] = function ($c) {
+$container['kafkaProducer'] = function ($c) {
     $rk = new \RdKafka\Producer();
-    $rk->setLogLevel(LOG_DEBUG);
-    $rk->addBrokers("10.0.0.1,10.0.0.2");
-    $settings = $c->get('settings')['logger'];
-    $logger = new Monolog\Logger($settings['name']);
-    $logger->pushProcessor(new Monolog\Processor\UidProcessor());
-    $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
-    return $logger;
+
+    $settings = $c->get('settings')['kafka'];
+    $rk->setLogLevel($settings['log_level']);
+    $rk->addBrokers($settings['brokers']);
+    return $rk;
+};
+
+// kafka NewOrder topic
+$container['newOrderTopic'] = function ($c) {
+    return $c->get('kafkaProducer')->newTopic("NewOrder");
 };
