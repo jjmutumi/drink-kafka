@@ -26,3 +26,19 @@ To run the application in development, you can run these commands:
 Run this command in the application directory to run the test suite
 
 	composer test
+
+## The Requirements
+
+POST
+
+/api/orders
+
+| Variable      | Type                  | Description                               |
+| ------------- | --------------------- | ----------------------------------------- |
+| name          | string                | Name of the person ordering the drink     |
+| room          | string                | Name of the room the person is in         |
+| type          | string                | Type of drink                             |
+| milk          | boolean               | Does the person want milk or not          |
+| sugar         | integer               | Number of sugars                          |
+
+The api does a very basic validation of the data and then passes an event containing the data into a kafka topic of `NewOrder`.
