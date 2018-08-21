@@ -1,22 +1,24 @@
 <?php
 
-use \Psr\Http\Message\ServerRequestInterface as Request;
-use \Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
+use Respect\Validation\Exceptions\NestedValidationException;
 
 
 /** @var $newOrderValidator */
 $newOrderValidator = $app->getContainer()->get('newOrderValidator');
 
 
-$app->post('/api/orders', function (Request $request, Response $response, array $args) {
+$app->post('/api/orders', function (Request $request, Response $response, array $args) use ($newOrderValidator) {
     $data = $request->getParsedBody();
-    if ($newOrderValidator->validate($data)) {
-        $this->newOrderTopic->produce(RD_KAFKA_PARTITION_UA, 0, $request->getBody()->getContents());
+    try {
+        $newOrderValidator->assert($data);
+        $this->newOrderTopic->produce(RD_KAFKA_PARTITION_UA, 0, json_encode($data));
         $response = $response
                         ->withStatus(200)
                         ->withJson(["message" => "OK"]);
-    } else {
-        $errors = $newOrderValidator->getMessages();
+    } catch(NestedValidationException $exception) {
+        $errors = $exception->getMessages();
         $response = $response
                         ->withStatus(400)
                         ->withJson(["message" => $errors]);
