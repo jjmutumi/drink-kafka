@@ -1,5 +1,10 @@
 <?php
-// DIC configuration
+/**
+ *  DIC configuration
+ */
+
+use Respect\Validation\Validator as v;
+
 
 $container = $app->getContainer();
 
@@ -16,4 +21,13 @@ $container['kafkaProducer'] = function ($c) {
 // kafka NewOrder topic
 $container['newOrderTopic'] = function ($c) {
     return $c->get('kafkaProducer')->newTopic("NewOrder");
+};
+
+// drink order validator
+$container["newOrderValidator"] = function ($c) {
+    return v::key("name", v::stringType())
+            ->key("room", v::stringType())
+            ->key("type", v::stringType())
+            ->key("milk", v::boolType())
+            ->key("sugar", v::intType()->min(0));
 };
