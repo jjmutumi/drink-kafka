@@ -1,0 +1,32 @@
+{
+    "name": "jjmutumi/drink-kafka",
+    "description": "A simple REST API for drink orders with Slim Framework 3",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joseph Mutumi",
+            "email": "jjmutumi@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "slim/slim": "^3.1",
+        "psr/http-message": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=4.8 < 6.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "process-timeout" : 0
+    },
+    "scripts": {
+        "start": "php -S localhost:8080 -t public",
+        "test": "phpunit"
+    }
+
+}
